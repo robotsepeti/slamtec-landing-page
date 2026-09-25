@@ -4,16 +4,6 @@ const pdf = (name, file) => ({ name, url: `assets/docs/${file}`, local: true });
 // PDF labels and model matches follow Slamtec Support and Slamtec Wiki.
 const products = [
   {
-    id: 'ornek-lidar', name: 'Örnek LiDAR', fullName: 'Slamtec Örnek LiDAR 360° Lazer Tarayıcı (Demo Ürün)',
-    family: 'RPLIDAR', category: 'lidar', image: 'ornek-lidar.jpg',
-    url: 'https://www.robotsepeti.com/',
-    summary: 'Bu bir demo üründür; eğitim videosu için eklenmiştir.',
-    paragraphs: ['Ürün ekleme adımlarını göstermek için oluşturulmuş örnek kayıt.'],
-    features: ['360° tarama', '12 m menzil'],
-    specs: [['Menzil', '0,15–12 m'], ['Tarama açısı', '360°']],
-    chips: ['12 m', '360°', 'Demo']
-  },
-  {
     id: 'aurora-s', name: 'Aurora S', fullName: 'SLAMTEC Aurora S Deep Learning vSLAM Kompakt Haritalama ve Algılama Sensörü',
     family: '3D Haritalama', category: 'mapping', image: 'aurora-s.jpg',
     url: 'https://www.robotsepeti.com/slamtec-aurora-s-deep-learning-vslam-lidar-kompakt-haritalama-ve-algilama-sensoru',
