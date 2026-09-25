@@ -278,6 +278,7 @@ function setVideoPlayback(stage, play) {
 // Ürün sayıları listeye göre otomatik güncellenir.
 const allFilterCount = document.querySelector('[data-filter="all"] span');
 if (allFilterCount) allFilterCount.textContent = products.length;
+document.querySelectorAll('.product-count strong').forEach((count) => { count.textContent = products.length; });
 const categoryLabels = { lidar: 'RPLIDAR modeli', mapping: 'Haritalama ve SLAM ürünü', industrial: 'Endüstriyel LiDAR' };
 document.querySelectorAll('strong + span').forEach((label) => {
   const category = Object.keys(categoryLabels).find((key) => categoryLabels[key] === label.textContent.trim());
