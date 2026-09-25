@@ -229,9 +229,10 @@ const products = [
   }
 ];
 
+// Yeni eklenen ürünlerde eksik alanlar boş kabul edilir; site hata vermez.
+const productDefaults = { family: '', category: 'lidar', summary: '', paragraphs: [], features: [], specs: [], chips: [], docs: [], official: '', gallery: [], detail: [], scenarios: [], extraSpecs: [], note: '' };
 for (const product of products) {
-  if (!productEditorial[product.id]) throw new Error(`Eksik ürün içeriği: ${product.id}`);
-  Object.assign(product, productEditorial[product.id]);
+  Object.assign(product, { ...productDefaults, fullName: product.name, ...product, ...(productEditorial[product.id] || {}) });
   product.manufacturerStories = manufacturerStories[product.id] || [];
   product.video = productVideos[product.id] || null;
 }
@@ -274,6 +275,18 @@ function setVideoPlayback(stage, play) {
   stage.classList.toggle('is-playing', play);
 }
 
+// Ürün sayıları listeye göre otomatik güncellenir.
+const allFilterCount = document.querySelector('[data-filter="all"] span');
+if (allFilterCount) allFilterCount.textContent = products.length;
+const categoryLabels = { lidar: 'RPLIDAR modeli', mapping: 'Haritalama ve SLAM ürünü', industrial: 'Endüstriyel LiDAR' };
+document.querySelectorAll('strong + span').forEach((label) => {
+  const category = Object.keys(categoryLabels).find((key) => categoryLabels[key] === label.textContent.trim());
+  if (category) label.previousElementSibling.textContent = products.filter((product) => product.category === category).length;
+});
+document.querySelectorAll('p').forEach((paragraph) => {
+  if (/listelenen \d+ modeli/.test(paragraph.textContent)) paragraph.textContent = paragraph.textContent.replace(/listelenen \d+ modeli/, `listelenen ${products.length} modeli`);
+});
+
 function renderCards() {
   const shown = products.filter((product) => activeFilter === 'all' || product.category === activeFilter);
   grid.innerHTML = shown.map((product) => `
@@ -313,24 +326,24 @@ function renderDetail(product) {
         <div class="detail-chips">${product.chips.map((chip) => `<span>${escapeHtml(chip)}</span>`).join('')}</div>
         <div class="detail-actions">
           <a class="primary-button" href="${escapeHtml(product.url)}" target="_blank" rel="noopener noreferrer">RobotSepeti'nde incele <span aria-hidden="true">↗</span></a>
-          <button class="outline-button" type="button" data-scroll-docs>Teknik belgeler ↓</button>
+          ${product.docs.length ? `<button class="outline-button" type="button" data-scroll-docs>Teknik belgeler ↓</button>` : ''}
         </div>
-        <a class="manufacturer-link" href="${escapeHtml(product.official)}" target="_blank" rel="noopener noreferrer">Slamtec teknik sayfası <span aria-hidden="true">↗</span></a>
+        ${product.official ? `<a class="manufacturer-link" href="${escapeHtml(product.official)}" target="_blank" rel="noopener noreferrer">Slamtec teknik sayfası <span aria-hidden="true">↗</span></a>` : ''}
       </div>
     </div>
     <div class="detail-content">
       <div class="detail-copy">
         <h3>Modelin çalışma biçimi ve kullanım amacı</h3>
         ${[...product.paragraphs, ...product.detail].map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join('')}
-        <h3 class="subsection-title">Uygun kullanım alanları</h3>
-        <ul class="application-list">${product.scenarios.map((scenario) => `<li>${escapeHtml(scenario)}</li>`).join('')}</ul>
-        <h3 class="subsection-title">Öne çıkan işlevler</h3>
-        <ul class="feature-list">${product.features.map((feature) => `<li>${escapeHtml(feature)}</li>`).join('')}</ul>
+        ${product.scenarios.length ? `<h3 class="subsection-title">Uygun kullanım alanları</h3>
+        <ul class="application-list">${product.scenarios.map((scenario) => `<li>${escapeHtml(scenario)}</li>`).join('')}</ul>` : ''}
+        ${product.features.length ? `<h3 class="subsection-title">Öne çıkan işlevler</h3>
+        <ul class="feature-list">${product.features.map((feature) => `<li>${escapeHtml(feature)}</li>`).join('')}</ul>` : ''}
       </div>
       <div class="spec-column">
         <h3>Teknik özellikler</h3>
         <table class="spec-table"><tbody>${[...specs].map(([label, value]) => `<tr><th scope="row">${escapeHtml(label)}</th><td>${escapeHtml(value)}</td></tr>`).join('')}</tbody></table>
-        <div class="selection-note"><strong>Model seçimi için not</strong><p>${escapeHtml(product.note)}</p></div>
+        ${product.note ? `<div class="selection-note"><strong>Model seçimi için not</strong><p>${escapeHtml(product.note)}</p></div>` : ''}
       </div>
     </div>
     ${product.video ? `<section class="product-video ${product.video.type === 'gif' ? 'is-gif' : ''}" aria-labelledby="product-video-title">
@@ -347,12 +360,12 @@ function renderDetail(product) {
         <figcaption><span class="figure-index">${String(index + 1).padStart(2, '0')}</span><div><strong>${escapeHtml(story.title)}</strong><p>${escapeHtml(story.caption)}</p><a href="${escapeHtml(story.source)}" target="_blank" rel="noopener noreferrer">Slamtec kaynağı ↗</a></div></figcaption>
       </figure>`).join('')}</div>
     </section>` : ''}
-    <div class="docs-panel" id="belgeler">
+    ${product.docs.length ? `<div class="docs-panel" id="belgeler">
       <div><span class="eyebrow"><span class="eyebrow-line"></span> Slamtec Support</span><h3>Teknik belgeler</h3></div>
       <div class="docs-list">${product.docs.map((document) => `<a class="doc-link" href="${escapeHtml(document.url)}" download><span>${escapeHtml(document.name)}</span><span aria-hidden="true">↓</span></a>`).join('')}</div>
       <p class="docs-note">Belgeler doğrudan PDF olarak indirilir. Güncel sürümler Slamtec Support sayfasındadır.</p>
-    </div>
-    <div class="source-links"><span>Bilgi kaynakları</span><a href="${escapeHtml(product.url)}" target="_blank" rel="noopener noreferrer">RobotSepeti ürün sayfası ↗</a><a href="${escapeHtml(product.official)}" target="_blank" rel="noopener noreferrer">Slamtec teknik sayfası ↗</a></div>
+    </div>` : ''}
+    <div class="source-links"><span>Bilgi kaynakları</span><a href="${escapeHtml(product.url)}" target="_blank" rel="noopener noreferrer">RobotSepeti ürün sayfası ↗</a>${product.official ? `<a href="${escapeHtml(product.official)}" target="_blank" rel="noopener noreferrer">Slamtec teknik sayfası ↗</a>` : ''}</div>
     <dialog class="image-dialog" id="image-dialog" aria-label="Üretici görseli"><button class="image-dialog-close" type="button" data-close-story aria-label="Görseli kapat">✕</button><img alt=""></dialog>`;
   if (!reducedMotion && 'IntersectionObserver' in window) {
     revealObserver = new IntersectionObserver((entries, observer) => {
