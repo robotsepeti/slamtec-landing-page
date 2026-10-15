@@ -19,7 +19,7 @@
 - İki yayındaki siteden 532 medya, belge ve genel bağlantı yanıtı kontrol edildi: hata yok. Görsel/video MIME türleri ve 30 PDF'nin `%PDF` imzası doğrulandı.
 - SLAMTEC'in 20 farklı videosu tarayıcıda oynatıldı: `readyState=4`, ilerleyen zaman, sıfırdan büyük yükseklik, oynatma hatası yok; oynatıcı kontrolleri kapalı.
 - Mobil taramada yatay sayfa taşması, kırık görsel veya tablo/metin taşması bulunmadı.
-- Telefon `+90 212 697 62 14`, WhatsApp `+90 542 697 62 14`; logolar ve satış düğmeleri RobotSepeti'ne gider. SLAMTEC ürün sayfalarında üretici sitesine çıkan bağlantı yok.
+- Telefon `+90 212 697 62 12`, WhatsApp `+90 542 697 62 14`; logolar ve satış düğmeleri RobotSepeti'ne gider. SLAMTEC ürün sayfalarında üretici sitesine çıkan bağlantı yok.
 - `node scripts/build.js`, `node --check app.js` ve içerik/dosya kontrolü başarılı. Tarayıcıda uygulama konsol hatası görülmedi.
 
 ## Bu taramada düzeltilenler
